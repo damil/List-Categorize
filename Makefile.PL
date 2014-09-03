@@ -1,20 +1,20 @@
-
 use strict;
 use warnings;
+use inc::Module::Install;
 
-use ExtUtils::MakeMaker;
+name         'List-Categorize';
+all_from     'lib/List/Categorize.pm';
 
-WriteMakefile(
-  DISTNAME  => 'List-Categorize',
-  NAME      => 'List::Categorize',
-  AUTHOR    => 'Bill\ Odom\ \<wnodom\@cpan\.org\>',
-  ABSTRACT  => 'Categorize\ list\ items\ into\ a\ hash\ of\ named\ sublists\.',
-  VERSION   => '0.03',
-  EXE_FILES => [ qw() ],
-  (eval { ExtUtils::MakeMaker->VERSION(6.31) } ? (LICENSE => 'perl') : ()),
-  PREREQ_PM    => {
-    "Test::More" => '0',
-    "Test::Deep" => '0',
-    "Test::NoWarnings" => '0',
-  },
+resources (
+   license    => 'http://www.perlfoundation.org/artistic_license_2_0',
+   repository => 'git://github.com/damil/List-Categorize.git',
+   bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=List-Categorize',
 );
+
+test_requires (
+    "Test::More"       => '0',
+    "Test::Deep"       => '0',
+    "Test::NoWarnings" => '0',
+);
+
+WriteAll;

@@ -4,9 +4,10 @@ MANIFEST
 META.yml
 Makefile.PL
 README
-dist.ini
+#dist.ini
 lib/List/Categorize.pm
 t/00-load.t
 t/categorize.t
+t/categorize-multi.t
 t/pod-coverage.t
 t/pod.t

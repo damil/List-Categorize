@@ -10,3 +10,5 @@ Revision history for List-Categorize
 0.03    Tue Sep 22 19:21:32 2009
         Updated Changes file and corrected RT URLs.
 
+0.04    Wed Sep 03 08:36:16 2014
+        Merged with List::Categorize::Multi (multilevel categorization)
