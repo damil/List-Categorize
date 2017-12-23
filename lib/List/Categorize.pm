@@ -28,16 +28,18 @@ our %EXPORT_TAGS = (
 
 sub categorize (&@)
 #
-# Usage:    %hash = categorize {BLOCK} @LIST
-# Returns:  a hash of lists
+# Usage:    %tree = categorize {BLOCK} @LIST
+# Returns:  a tree of lists
 #
-# Creates a hash by running a subroutine for each element in a list. The
-# subroutine returns a list of hash keys (the "categories") for the current
-# element. (If the subroutine returns undef for a list element, that
-# element is not placed in the resulting hash.)
+# Creates a tree by running a subroutine for each element in a
+# list. That subroutine should return a list of hash keys (the
+# "categories") for the current element, each key in the list
+# corresponding to the next depth level within the tree. If the
+# subroutine returns undef for a list element, that element is not
+# placed in the resulting tree.
 #
-# The resulting hash contains a key for each first-level category, and
-# each key refers to a sub-hash for the next-level category,
+# The resulting tree contains a key for each first-level category, and
+# each key refers to a sub-tree for the next-level category,
 # etc. until reaching a leaf, which contains a list of the elements
 # that correspond to that sequence of categories. If there is only one
 # level of categories, the structure is just a hashref of lists of
@@ -74,8 +76,8 @@ sub categorize (&@)
         #
         my @categories = $coderef->();
 
-        # If categories were returned, use them as keys in the %tree
-        # hash, and add the current element to the list referenced by
+        # If categories were returned, use them as keys in %tree,
+        # and add the current element to the list referenced by
         # those keys.
         #
         # If the categorizer didn't return a value (or returned undef),
@@ -133,7 +135,7 @@ This documentation describes List::Categorize version 0.04.
 
     my %capitalized = categorize {
 
-        # Transform the element before placing it in the hash.
+        # Transform the element before placing it in the tree.
         $_ = ucfirst $_;
 
         # Use the first letter of the element as the first-level category,
@@ -162,40 +164,47 @@ Nothing by default.
 
 =head2 categorize BLOCK LIST
 
-    my %hash = categorize { $_ > 10 ? 'Big' : 'Little' } @list;
+    my %tree = categorize { $_ > 10 ? 'Big' : 'Little' } @list;
 
-C<categorize> creates a tree by running BLOCK for each element in LIST.
-The block should return a list of "categories" for the current
-element, i.e a list of scalar values corresponding to the sequence
-of subtrees under which this element will be placed.
-If the block returns an empty list,
-or a list containing an C<undef>,
-the corresponding element is not placed in the resulting tree.
+C<categorize> creates a tree by running BLOCK for each element in
+LIST.  The block should return a list of "categories" for the current
+element, i.e a list of scalar values corresponding to the sequence of
+subtrees under which this element will be placed.  If the block
+returns an empty list, or a list containing an C<undef>, the
+corresponding element is not placed in the resulting tree.
 
 The resulting tree contains a key for each top-level category.
 Values are either references to subtrees, or references
 to arrayrefs of elements (depending on the depth of the categorization).
 
 Within the block, $_ refers to the current list element. Elements can be
-modified before they're placed in the target hash by modifying the $_
+modified before they're placed in the target tree by modifying the $_
 variable:
 
-    my %hash = categorize { $_ = uc $_; 'List' } qw( one two three );
+    my %tree = categorize { $_ = uc $_; 'List' } qw( one two three );
 
-    # %hash now contains ( List => [ 'ONE', 'TWO', 'THREE' ] )
+    # %tree now contains ( List => [ 'ONE', 'TWO', 'THREE' ] )
 
 NOTE: The categorizer should return a list of strings, or C<undef>. Other values
 are reserved for future use, and may cause unpredictable results in the
-current version.
+current version. When using multi-level categorization, the categorizer
+should always return the same number of keys.
+
 
 =head1 SEE ALSO
 
-L<List::Part>
+L<List::MoreUtils/part>
+
+Previous versions of this module only handled one-level categorization,
+while multi-level categorization was implemented in
+L<List::Categorize::Multi>. Now both modules have been merged
+into L<List::Categorize>, therefore L<List::Categorize::Multi> is deprecated.
+
 
 =head1 AUTHOR
 
+Bill Odom, C<< <wnodom at cpan.org> >> (original author),
 Laurent Dami, C<< <dami at cpan.org> >> (added the multi-level categorization)
-Bill Odom, C<< <wnodom at cpan.org> >> (original author)
 
 
 =head1 BUGS
@@ -241,11 +250,11 @@ L<https://github.com/damil/List-Categorize>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (c) 2009 Bill Odom, 2014 Laurent Dami.
+Copyright (c) 2009 Bill Odom, 2017 Laurent Dami.
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl 5.10.0. For more details, see the full text
-of the licenses at L<http://www.perlfoundation.org/artistic_license_1_0>,
+of the licenses at L<http://www.perlfoundation.org/artistic_license_2_0>,
 and L<http://www.gnu.org/licenses/gpl-2.0.html>.
 
 This program is distributed in the hope that it will be
